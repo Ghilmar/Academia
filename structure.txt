@@ -1,0 +1,25 @@
+README: Estructura de archivos propuesta para el proyecto "academia-online-react-tailwind"
+
+/
+├─ package.json
+├─ tailwind.config.js
+├─ postcss.config.js
+├─ README.md
+├─ public/
+│  ├─ index.html
+│  └─ favicon.ico
+└─ src/
+   ├─ index.js
+   ├─ index.css
+   ├─ App.js
+   ├─ components/
+   │  ├─ Header.js
+   │  ├─ MentorCard.js
+   │  └─ AuthForm.js
+   └─ pages/
+      └─ Home.js
+
+
+
+      //************Instrcciones*****************
+      

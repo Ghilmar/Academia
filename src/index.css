@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Pequeños ajustes visuales */
+.hero-bg {
+  background: linear-gradient(180deg, rgba(15,118,110,0.06), rgba(255,255,255,0));
+}
+
+/* Placeholder util (puedes ajustar en tailwind.config) */
+:root {
+  --brand-primary: #0f766e;
+  --brand-primary-dark: #0b5e56;
+}
