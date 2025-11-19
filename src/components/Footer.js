@@ -15,12 +15,12 @@ export default function Footer() {
 
           {/* Enlaces Rápidos */}
           <div>
-            <h3 className="text-lg font-bold mb-4">Effffnlaces Rápidos</h3>
+            <h3 className="text-lg font-bold mb-4"></h3>
             <ul className="text-gray-400 space-y-2">
               <li><a href="/" className="hover:text-white transition">Inicio</a></li>
-              <li><a href="/courses" className="hover:text-white transition">Cursos</a></li>
-              <li><a href="/mentors" className="hover:text-white transition">Mentores</a></li>
-              <li><a href="/contact" className="hover:text-white transition">Contacto</a></li>
+              <li><a href="#cursos" className="hover:text-white transition">Cursos</a></li>
+              <li><a href="#mentores" className="hover:text-white transition">Mentores</a></li>
+              <li><a href="/" className="hover:text-white transition">Contacto</a></li>
             </ul>
           </div>
 
@@ -28,8 +28,8 @@ export default function Footer() {
           <div>
             <h3 className="text-lg font-bold mb-4">Contacto</h3>
             <p className="text-gray-400">
-              Email: info@mentorapp.com<br />
-              Teléfono: +1 (234) 567-8900
+              Email: info@gmail.com<br />
+              Teléfono: 60482404
             </p>
           </div>
         </div>

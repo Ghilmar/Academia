@@ -1,22 +1,31 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-export default function MentorCard({ id, photo, name, specialty , email, phone}) {
-  const finalPhoto = photo || "https://via.placeholder.com/150";
+export default function MentorCard({ id, photo, name, specialty, email, phone }) {
+  // Manejo seguro de la foto del mentor
+  let finalPhoto;
+
+  if (photo && photo.trim() !== "") {
+    finalPhoto = photo;
+  } else {
+    // Placeholder genérico
+    finalPhoto = "https://via.placeholder.com/150/cccccc/ffffff?text=Mentor";
+  }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-4 flex flex-col items-center text-center">
+    <div className="bg-white rounded-lg shadow-sm p-4 flex flex-col items-center text-center hover:shadow-md transition-shadow duration-200">
       <div className="w-24 h-24 md:w-28 md:h-28 rounded-full overflow-hidden border-2 border-gray-100">
         <img src={finalPhoto} alt={name || "Mentor"} className="w-full h-full object-cover" />
       </div>
 
       <div className="mt-3">
-        <div className="font-semibold text-gray-800">
-          {name || "Nombre no disponible"}
-        </div>
-        <div className="text-sm text-gray-500 mt-1">
-          {specialty || "Especialidad no especificada"}
-        </div>
+        <div className="font-semibold text-gray-800">{name || "Nombre no disponible"}</div>
+        <div className="text-sm text-gray-500 mt-1">{specialty || "Especialidad no especificada"}</div>
+      </div>
+
+      <div className="mt-2 text-xs text-gray-500">
+        <div>{email || "Email no disponible"}</div>
+        <div>{phone || "Teléfono no disponible"}</div>
       </div>
 
       <div className="mt-4 flex gap-2 w-full">

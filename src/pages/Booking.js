@@ -37,10 +37,21 @@ export default function Booking() {
     load();
   }, [mentorId]);
 
+  // Función para obtener la foto del mentor
+  const getMentorPhoto = () => {
+    if (mentor?.user?.photo && mentor.user.photo.trim() !== "") {
+      return mentor.user.photo;
+    } else if (mentor?.user?.name) {
+      const initial = mentor.user.name.charAt(0).toUpperCase();
+      return `https://via.placeholder.com/150/007bff/ffffff?text=${encodeURIComponent(initial)}`;
+    } else {
+      return "https://via.placeholder.com/150/cccccc/ffffff?text=Mentor";
+    }
+  };
+
   async function handleSubmit(e) {
     e.preventDefault();
 
-    // Simple validation
     if (!fullName || !email || !telefono || !fecha || !hora || !motivo) {
       alert("Completa todos los campos.");
       return;
@@ -48,7 +59,7 @@ export default function Booking() {
 
     const booking = {
       mentorId,
-      mentorName: mentor?.name || "",
+      mentorName: mentor?.user?.name || "",
       fullName,
       email,
       telefono,
@@ -108,15 +119,15 @@ export default function Booking() {
           <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg p-8">
             <div className="flex flex-col md:flex-row items-center gap-6 mb-8">
               <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-primary flex-shrink-0">
-                {mentor.photo ? (
-                  <img src={mentor.photo} alt={mentor.name} className="w-full h-full object-cover" />
-                ) : (
-                  <div className="bg-gray-100 w-full h-full" />
-                )}
+                <img
+                  src={getMentorPhoto()}
+                  alt={mentor.user?.name || "Mentor"}
+                  className="w-full h-full object-cover"
+                />
               </div>
               <div>
-                <div className="text-xl font-semibold">{mentor.name}</div>
-                <div className="text-primary font-medium mb-1">{mentor.specialty}</div>
+                <div className="text-xl font-semibold">{mentor.user?.name || "Nombre no disponible"}</div>
+                <div className="text-primary font-medium mb-1">{mentor.experience || "Especialidad no disponible"}</div>
                 <div className="text-sm text-gray-500">{mentor.title}</div>
                 <div className="text-xs text-gray-400 mt-1">
                   Estado: {mentor.status === "Activo" ? (

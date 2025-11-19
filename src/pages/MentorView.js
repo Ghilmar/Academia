@@ -27,6 +27,18 @@ export default function MentorView() {
     load();
   }, [mentorId]);
 
+  // Función para obtener la foto del mentor
+  const getMentorPhoto = () => {
+    if (mentor?.user?.photo && mentor.user.photo.trim() !== "") {
+      return mentor.user.photo;
+    } else if (mentor?.user?.name) {
+      const initial = mentor.user.name.charAt(0).toUpperCase();
+      return `https://via.placeholder.com/150/007bff/ffffff?text=${encodeURIComponent(initial)}`;
+    } else {
+      return "https://via.placeholder.com/150/cccccc/ffffff?text=Mentor";
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 flex flex-col">
       <Header />
@@ -39,23 +51,17 @@ export default function MentorView() {
           <div className="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg p-8">
             <div className="flex flex-col md:flex-row items-center gap-8 mb-8">
               <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-primary flex-shrink-0">
-                {mentor.photo ? (
-                  <img src={mentor.photo} alt={mentor.name} className="w-full h-full object-cover" />
-                ) : (
-                  <div className="bg-gray-100 w-full h-full flex items-center justify-center text-primary text-5xl font-bold">{mentor.name?.charAt(0) || "?"}</div>
-                )}
+                <img
+                  src={getMentorPhoto()}
+                  alt={mentor.user?.name || "Mentor"}
+                  className="w-full h-full object-cover"
+                />
               </div>
               <div className="flex-1">
-                <div className="mb-2 text-2xl font-bold text-gray-800">{mentor.name}</div>
-                <div className="mb-1 text-primary font-semibold text-lg">{mentor.specialty}</div>
-                <div className="mb-1 text-sm text-gray-500">{mentor.title}</div>
-                <div className="text-xs text-gray-400 mt-2">
-                  Estado: {mentor.status === "Activo" ? (
-                    <span className="inline-block px-2 py-0.5 rounded bg-green-100 text-green-800">Activo</span>
-                  ) : (
-                    <span className="inline-block px-2 py-0.5 rounded bg-gray-100 text-gray-700">Inactivo</span>
-                  )}
-                </div>
+                <div className="mb-2 text-2xl font-bold text-gray-800">{mentor.user?.name || "Nombre no disponible"}</div>
+                 
+                <div className="mb-1 text-sm text-gray-500">{mentor.title || ""}</div>
+          
               </div>
             </div>
 
@@ -63,26 +69,20 @@ export default function MentorView() {
               <div>
                 <h3 className="text-lg font-semibold mb-2 text-primary">Sobre el mentor</h3>
                 <p className="text-gray-600 mb-2">
-                  {(mentor.bio && mentor.bio.length > 0)
-                    ? mentor.bio
-                    : "Mentor especializado en su área, enfocado en brindar sesiones prácticas y personalizadas para tu desarrollo profesional."}
+                    {mentor.experience ||     "Mentor especializado en su área, enfocado en brindar sesiones prácticas y personalizadas para tu desarrollo profesional."}
                 </p>
                 <div>
-                  <strong>Especialidad:</strong> {mentor.experience}
+                  <strong>Idimas:</strong> {mentor.languages || "No especificado"}
                   <br />
-                  <strong>Cargo/Título:</strong> {mentor.title}
+                  <strong>Cargo/Título:</strong> {mentor.title || "No especificado"}
                 </div>
               </div>
               <div>
-                <h3 className="text-lg font-semibold mb-2 text-primary">Información</h3>
+                <h3 className="text-lg font-semibold mb-2 text-primary">Información de contacto</h3>
                 <ul className="space-y-2">
-                     <li>
-                    <span className="font-medium">Nombre: </span>{mentor.user?.name || "No disponible"}
-    
-                  </li>
+              
                   <li>
                     <span className="font-medium">Email: </span>{mentor.user?.email || "No disponible"}
-          
                   </li>
                   <li>
                     <span className="font-medium">Teléfono: </span>{mentor.user?.phone || "No disponible"}

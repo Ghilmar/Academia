@@ -1,53 +1,60 @@
 import React, { useEffect, useState } from "react";
 import { createMentor, updateMentor } from "../api"; // tus funciones de Firestore
-import { uploadMentorPhoto } from "../services/firebaseService"; // función para Storage
+import { uploadMentorPhoto } from "../services/firebaseService";
 
 export default function MentorFormModal({ isOpen, onClose, onSave, initialData = null }) {
-  // Campos del usuario (parte del objeto user del modelo Mentor)
+  // Campos de usuario
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
 
-  const [phone, setPhone] = useState(""); // NUEVO CAMPO
-
-
-  // Campos específicos del mentor
+  // Campos de mentor
   const [experience, setExperience] = useState("");
   const [languages, setLanguages] = useState("");
   const [certificates, setCertificates] = useState("");
   const [schedules, setSchedules] = useState("");
 
-  // Referencias (IDs)
+  // Referencias
   const [idArea, setIdArea] = useState("");
   const [idPedagogicalMethod, setIdPedagogicalMethod] = useState("");
 
-  // Foto del mentor
+  // Imagen
   const [file, setFile] = useState(null);
+  const [imageUrl, setImageUrl] = useState(""); // URL externa
+  const [preview, setPreview] = useState(""); // vista previa
 
   useEffect(() => {
     if (initialData) {
       setName(initialData.user?.name || "");
       setEmail(initialData.user?.email || "");
-      setPhone(initialData.user?.phone || ""); // <--- Inicializar celular
+      setPhone(initialData.user?.phone || "");
       setExperience(initialData.experience || "");
       setLanguages(Array.isArray(initialData.languages) ? initialData.languages.join(", ") : "");
       setCertificates(Array.isArray(initialData.certificates) ? initialData.certificates.join(", ") : "");
       setSchedules(Array.isArray(initialData.schedules) ? initialData.schedules.join(", ") : "");
       setIdArea(initialData.id_area || "");
       setIdPedagogicalMethod(initialData.id_pedagogicalMethod || "");
-      setFile(null); // reset archivo
-    } else {
-      setName("");
-      setEmail("");
-       setPhone(""); // <--- Reiniciar celular
-      setExperience("");
-      setLanguages("");
-      setCertificates("");
-      setSchedules("");
-      setIdArea("");
-      setIdPedagogicalMethod("");
       setFile(null);
+      setImageUrl(initialData.user?.photo || "");
+      setPreview(initialData.user?.photo || "");
+    } else {
+      setName(""); setEmail(""); setPhone("");
+      setExperience(""); setLanguages(""); setCertificates(""); setSchedules("");
+      setIdArea(""); setIdPedagogicalMethod(""); setFile(null); setImageUrl(""); setPreview("");
     }
   }, [initialData, isOpen]);
+
+  useEffect(() => {
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => setPreview(reader.result);
+      reader.readAsDataURL(file);
+    } else if (imageUrl) {
+      setPreview(imageUrl);
+    } else {
+      setPreview("");
+    }
+  }, [file, imageUrl]);
 
   if (!isOpen) return null;
 
@@ -69,7 +76,7 @@ export default function MentorFormModal({ isOpen, onClose, onSave, initialData =
         ...(initialData?.user?.id && { id: initialData.user.id }),
         name: name.trim(),
         email: email.trim(),
-        phone: phone.trim()
+        phone: phone.trim(),
       },
       id_area: parseInt(idArea, 10),
       id_pedagogicalMethod: parseInt(idPedagogicalMethod, 10)
@@ -78,20 +85,21 @@ export default function MentorFormModal({ isOpen, onClose, onSave, initialData =
     try {
       let mentor;
       if (initialData?.id) {
-        // Actualizar mentor
         mentor = await updateMentor(initialData.id, payload);
       } else {
-        // Crear mentor
         mentor = await createMentor(payload);
       }
 
-      // Subir foto si hay archivo seleccionado
+      // Subir foto si hay archivo
       if (file) {
-        const photoURL = await uploadMentorPhoto(file, mentor.id); // subir a Storage
+        const photoURL = await uploadMentorPhoto(file, mentor.id);
         mentor = await updateMentor(mentor.id, { ...mentor, user: { ...mentor.user, photo: photoURL } });
+      } else if (imageUrl) {
+        // usar URL externa
+        mentor = await updateMentor(mentor.id, { ...mentor, user: { ...mentor.user, photo: imageUrl } });
       }
 
-      onSave(mentor); // actualizar lista en la UI
+      onSave(mentor);
       onClose();
     } catch (err) {
       alert("Error guardando mentor: " + (err.message || err));
@@ -114,11 +122,11 @@ export default function MentorFormModal({ isOpen, onClose, onSave, initialData =
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="px-6 py-6 space-y-4">
+        <form onSubmit={handleSubmit} className="px-6 py-6 space-y-6">
           {/* Datos de usuario */}
           <fieldset className="border border-blue-200 rounded-lg p-4">
             <legend className="text-sm font-semibold text-blue-900 px-2">📋 Datos del Usuario</legend>
-            <div className="space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700">Nombre completo</label>
                 <input value={name} onChange={e => setName(e.target.value)} type="text" placeholder="Ej. Ana Fernández García" className="mt-1 w-full px-3 py-2 rounded-md border border-gray-300" />
@@ -127,31 +135,25 @@ export default function MentorFormModal({ isOpen, onClose, onSave, initialData =
                 <label className="block text-sm font-medium text-gray-700">Email</label>
                 <input value={email} onChange={e => setEmail(e.target.value)} type="email" placeholder="Ej. ana@example.com" className="mt-1 w-full px-3 py-2 rounded-md border border-gray-300" />
               </div>
-
-
               <div>
-  <label className="block text-sm font-medium text-gray-700">Número de celular</label>
-  <input
-    value={phone}
-    onChange={e => setPhone(e.target.value)}
-    type="tel"
-    placeholder="Ej. 600123456"
-    className="mt-1 w-full px-3 py-2 rounded-md border border-gray-300"
-    required
-  />
-</div>
-
-
-
-
+                <label className="block text-sm font-medium text-gray-700">Número de celular</label>
+                <input value={phone} onChange={e => setPhone(e.target.value)} type="tel" placeholder="Ej. 600123456" className="mt-1 w-full px-3 py-2 rounded-md border border-gray-300" />
+              </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700">Foto del mentor</label>
-                <input type="file" accept="image/*" onChange={e => setFile(e.target.files[0])} />
+                <input type="file" accept="image/*" onChange={e => setFile(e.target.files[0])} className="mt-1 w-full" />
+                <p className="text-sm text-gray-500 mt-1">O ingresa la URL de la imagen:</p>
+                <input type="text" value={imageUrl} onChange={e => setImageUrl(e.target.value)} placeholder="https://..." className="mt-1 w-full px-3 py-2 rounded-md border border-gray-300" />
               </div>
+              {preview && (
+                <div className="col-span-full mt-2 flex justify-center">
+                  <img src={preview} alt="Preview" className="w-32 h-32 object-cover rounded-full border" />
+                </div>
+              )}
             </div>
           </fieldset>
 
-          {/* Datos del mentor */}
+          {/* Datos de mentor */}
           <fieldset className="border border-green-200 rounded-lg p-4">
             <legend className="text-sm font-semibold text-green-900 px-2">🎓 Datos del Mentor</legend>
             <div className="space-y-3">
@@ -177,7 +179,7 @@ export default function MentorFormModal({ isOpen, onClose, onSave, initialData =
           {/* Referencias */}
           <fieldset className="border border-purple-200 rounded-lg p-4">
             <legend className="text-sm font-semibold text-purple-900 px-2">🔗 Referencias</legend>
-            <div className="space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label>Área ID *</label>
                 <input value={idArea} onChange={e => setIdArea(e.target.value)} type="number" className="mt-1 w-full px-3 py-2 rounded-md border border-gray-300" />
@@ -190,8 +192,8 @@ export default function MentorFormModal({ isOpen, onClose, onSave, initialData =
           </fieldset>
 
           <div className="pt-4 border-t flex items-center justify-end gap-3">
-            <button type="button" onClick={onClose} className="px-4 py-2 rounded-md border border-gray-300 text-gray-700">Cancelar</button>
-            <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-md">{initialData ? "Actualizar" : "Crear"} Mentor</button>
+            <button type="button" onClick={onClose} className="px-4 py-2 rounded-md border border-gray-300 text-gray-700 hover:bg-gray-50">Cancelar</button>
+            <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">{initialData ? "Actualizar" : "Crear"} Mentor</button>
           </div>
         </form>
       </div>
