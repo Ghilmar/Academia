@@ -1,5 +1,6 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
+
 import Home from "./pages/Home";
 import AuthForm from "./components/AuthForm";
 import MentorManagement from "./pages/MentorManagement";
@@ -9,56 +10,70 @@ import Booking from "./pages/Booking";
 import AdminLayout from "./components/AdminLayout";
 import UserManagement from "./pages/UserManagement";
 import MentorView from "./pages/MentorView";
-import BookingManagement from "./pages/BookingManagement"; 
+import BookingManagement from "./pages/BookingManagement";
 
+import ProtectedRoute from "./components/ProtectedRoute";
+import { AuthProvider } from "./context/AuthContext";
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-800">
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/auth" element={<AuthForm />} />
+    <AuthProvider>
+      <div className="min-h-screen bg-gray-50 text-gray-800">
+        <Routes>
+          {/* Públicas */}
+          <Route path="/" element={<Home />} />
+          <Route path="/auth" element={<AuthForm />} />
+          <Route path="/cursos/:id" element={<CourseView />} />
+          <Route path="/mentores/:mentorId/book" element={<Booking />} />
+          <Route path="/mentores/:mentorId" element={<MentorView />} />
 
-        {/* Public course view and booking */}
-        <Route path="/courses/:id" element={<CourseView />} />
-        <Route path="/mentores/:mentorId/book" element={<Booking />} />
+          {/* ADMIN PROTEGIDAS */}
+          <Route
+            path="/admin/usuarios"
+            element={
+              <ProtectedRoute>
+         
+                  <UserManagement />
+            
+              </ProtectedRoute>
+            }
+          />
 
-        {/* Admin routes wrapped with AdminLayout */}
-        <Route
-          path="/admin/usuarios"
-          element={<UserManagement />}
-        />
-        <Route
-          path="/admin/mentores"
-          element={
-            <AdminLayout>
-              <MentorManagement />
-            </AdminLayout>
-          }
-        />
-        <Route
-          path="/admin/cursos"
-          element={
-            <AdminLayout>
-              <CourseManagement />
-            </AdminLayout>
-          }
-        />
+          <Route
+            path="/admin/mentores"
+            element={
+              <ProtectedRoute>
+           
+                  <MentorManagement />
+      
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/admin/bookings"
-          element={
-            <AdminLayout>
-              <BookingManagement />
-            </AdminLayout>
-          }
-        />  
+          <Route
+            path="/admin/cursos"
+            element={
+              <ProtectedRoute>
+      
+                  <CourseManagement />
+        
+              </ProtectedRoute>
+            }
+          />
 
-        <Route path="/mentores/:mentorId" element={<MentorView />} />
+          <Route
+            path="/admin/bookings"
+            element={
+              <ProtectedRoute>
 
-        <Route path="/cursos/:courseId" element={<CourseView />} />
+                  <BookingManagement />
+   
+              </ProtectedRoute>
+            }
+          />
 
-      </Routes>
-    </div>
+        </Routes>
+      </div>
+    </AuthProvider>
   );
 }

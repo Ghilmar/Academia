@@ -40,7 +40,8 @@ function PdfViewer({ url, title }) {
 }
 
 export default function CourseView() {
-  const { courseId } = useParams();
+  //const { courseId } = useParams();
+  const { id } = useParams();
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -50,7 +51,7 @@ export default function CourseView() {
       setLoading(true);
       setError(null);
       try {
-        const data = await getCourse(courseId);
+        const data = await getCourse(id); //cambiamos courseId por id
         setCourse(data);
       } catch (err) {
         setError(err.message || "No se pudo cargar el curso");
@@ -59,7 +60,7 @@ export default function CourseView() {
       }
     }
     load();
-  }, [courseId]);
+  }, [id]); //cambiamos courseId por id
 
   const images = course?.images ?? [];
   const videos = course?.videos ?? [];

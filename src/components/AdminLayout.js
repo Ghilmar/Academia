@@ -10,7 +10,8 @@ export default function AdminLayout({ children }) {
     { name: "Gestión de Mentores", to: "/admin/mentores", icon: "user" },
     { name: "Gestión de Cursos", to: "/admin/cursos", icon: "book" },
     { name: "Gestión de Reservas", to: "/admin/bookings", icon: "book" },
-    { name: "Configuración", to: "/admin/config", icon: "settings" }
+    { name: "Configuración", to: "/admin/config", icon: "settings" },
+    { name: "Volver", to: "/", icon: "book" }  // link a  home
   ];
 
   return (

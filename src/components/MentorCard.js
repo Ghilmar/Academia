@@ -9,7 +9,8 @@ export default function MentorCard({ id, photo, name, specialty, email, phone })
     finalPhoto = photo;
   } else {
     // Placeholder genérico
-    finalPhoto = "https://via.placeholder.com/150/cccccc/ffffff?text=Mentor";
+    finalPhoto = "https://placehold.co/150x150?text=Mentor&font=roboto";
+
   }
 
   return (
